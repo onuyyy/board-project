@@ -1,0 +1,52 @@
+debug: false
+# actuator? endpoint ?? ???
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    com.web.board_project: debug
+    org.springframework.web.servlet: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/board
+    username: onuy
+    password: P@ssw0rd
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+  h2:
+    console:
+      enabled: false
+  sql:
+    init:
+      mode: always
+
+---
+# @DataJpaTest 어노테이션을 사용하면, 자동으로 Jpa가 미리 준비한 Db로 테스트를 하게 된다.
+# 그것보단 테스트 DB를 따로 지정하고 싶을 때 아래와 같이 설정한 후
+# 테스트 클래스에 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) 으로 설정하면 된다.
+
+#spring:
+#  config:
+#    activate:
+#      on-profile: testdb
+#  datasource:
+#    url: jdbc:h2:mem:board;mode=mysql
+#    driver-class-name: org.h2.Driver
+#  sql:
+#    init:
+#      mode: always
+#  test.database.replace: none
