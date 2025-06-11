@@ -1,14 +1,10 @@
 package com.web.board_project.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -21,10 +17,8 @@ import java.util.Set;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Article {
-
+public class Article extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -38,12 +32,7 @@ public class Article {
     @OrderBy("id")
     // articleComment와 양방향 바인딩 > 실무에서는 양방향 바인딩을 잘 쓰지 않음
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL) // 자식 Entity에도 해당 엔티티의 작업을 전파하겠다는 의미 All
-    private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
-
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt;
-    @CreatedBy @Column(nullable = false, length = 100) private String createdBy;
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt;
-    @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy;
+    private final Set<ArticleComment> articleComments = new LinkedHashSet<>();;
 
     // @NoArgsConstructor(access = AccessLevel.PROTECTED) 와 같음
     protected Article() {}
