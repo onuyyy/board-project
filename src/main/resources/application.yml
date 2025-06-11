@@ -30,7 +30,10 @@ spring:
   sql:
     init:
       mode: always
-
+  # spring data 활용 설정
+  data.rest:
+    base-path:  /api
+    detection-strategy: annotated
 ---
 # @DataJpaTest 어노테이션을 사용하면, 자동으로 Jpa가 미리 준비한 Db로 테스트를 하게 된다.
 # 그것보단 테스트 DB를 따로 지정하고 싶을 때 아래와 같이 설정한 후
