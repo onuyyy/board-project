@@ -37,17 +37,16 @@ class ArticleControllerTest {
 
     }
 
-    @Disabled("구현 중")
     @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
     @Test
     public void givenNothing_whenRequestingArticleView_thenReturnArticleView() throws Exception {
         // given
 
         // when
-        mvc.perform(get("/article/1"))
+        mvc.perform(get("/articles/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(view().name("article/detail"))
+                .andExpect(view().name("articles/detail"))
                 .andExpect(model().attributeExists("articleComments"))
                 .andExpect(model().attributeExists("article"));
         // then
@@ -61,7 +60,7 @@ class ArticleControllerTest {
         // given
 
         // when
-        mvc.perform(get("/article/1"))
+        mvc.perform(get("/articles/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("article/search"))
                 .andExpect(model().attributeExists("article"))
