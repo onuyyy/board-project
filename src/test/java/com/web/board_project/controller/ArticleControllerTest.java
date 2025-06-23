@@ -22,17 +22,16 @@ class ArticleControllerTest {
         this.mvc = mvc;
     }
 
-    @Disabled("구현 중")
     @DisplayName("[view][GET] 게시글 리스트 (게시판) 페이지 - 정상 호출")
     @Test
     public void givenNothing_whenRequestingArticlesView_thenReturnArticlesView() throws Exception {
         // given
 
         // when
-        mvc.perform(get("/article"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.TEXT_HTML))
-                .andExpect(view().name("articles/index"))
+        mvc.perform(get("/articles")) // 요청 url
+                .andExpect(status().isOk()) // response
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML)) // response contentType
+                .andExpect(view().name("articles/index")) // view 위치
                 .andExpect(model().attributeExists("articles"));
         // then
 
