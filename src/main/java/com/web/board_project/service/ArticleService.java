@@ -38,7 +38,7 @@ public class ArticleService {
             case NICKNAME -> articleRepository.findByUserAccount_NicknameContaining(searchKeyword, pageable).map(ArticleDto::from);
 
             // 해시태그에서 #은 자동으로 넣어주자 todo # 어떻게 할지 리팩토링
-            case HASHTAG-> articleRepository.findByHashtag("#" + searchKeyword, pageable).map(ArticleDto::from);
+            case HASHTAG-> articleRepository.findByHashtag(searchKeyword, pageable).map(ArticleDto::from);
         };
     }
 
