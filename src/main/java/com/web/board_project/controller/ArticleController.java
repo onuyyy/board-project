@@ -2,7 +2,7 @@ package com.web.board_project.controller;
 
 import com.web.board_project.domain.type.SearchType;
 import com.web.board_project.dto.response.ArticleResponse;
-import com.web.board_project.dto.response.ArticleWithCommentResponse;
+import com.web.board_project.dto.response.ArticleWithCommentsResponse;
 import com.web.board_project.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/articles")
@@ -33,14 +31,15 @@ public class ArticleController {
     ) {
         map.addAttribute("articles", articleService.searchArticles(searchType, searchValue, pageable).map(ArticleResponse::from));
 
+
         return "articles/index";
     }
 
     @GetMapping("/{articleId}")
     public String article(@PathVariable Long articleId, ModelMap map) {
-        ArticleWithCommentResponse article = ArticleWithCommentResponse.from(articleService.getArticle(articleId));
+        ArticleWithCommentsResponse article = ArticleWithCommentsResponse.from(articleService.getArticle(articleId));
         map.addAttribute("article", article);
-        map.addAttribute("articleComments", List.of());
+        map.addAttribute("articleComments", article.articleCommentsResponse());
 
         return "articles/detail";
     }
