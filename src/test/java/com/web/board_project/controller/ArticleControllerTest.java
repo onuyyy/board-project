@@ -1,6 +1,7 @@
 package com.web.board_project.controller;
 
 import com.web.board_project.config.SecurityConfig;
+import com.web.board_project.domain.type.SearchType;
 import com.web.board_project.dto.ArticleWithCommentsDto;
 import com.web.board_project.dto.UserAccountDto;
 import com.web.board_project.service.ArticleService;
@@ -65,6 +66,31 @@ class ArticleControllerTest {
 
         // then
         then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
+    @DisplayName("[view][GET] 게시글 리스트 (게시판) 페이지 - 검색어와 함께 호출")
+    @Test
+    public void givenSearchKeyword_whenSearchingArticlesView_thenReturnArticlesView() throws Exception {
+        // given
+        SearchType searchType = SearchType.TITLE;
+        String searchValue = "title";
+        BDDMockito.given(articleService.searchArticles(eq(searchType), eq(searchValue), any(Pageable.class)))
+                .willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(1,2,3,4));
+
+        // when
+        mvc.perform(get("/articles")
+                        .queryParam("searchType", searchType.name())
+                        .queryParam("searchValue", searchValue)
+                ) // 요청 url
+                .andExpect(status().isOk()) // response
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML)) // response contentType
+                .andExpect(view().name("articles/index")) // view 위치
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("searchTypes"));
+        // then
+        then(articleService).should().searchArticles(eq(searchType), eq(searchValue), any(Pageable.class));
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
