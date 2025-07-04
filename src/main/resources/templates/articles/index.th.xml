@@ -27,7 +27,7 @@
         )}"/>
                 <attr sel="th.hashtag/a" th:text="'해시태그'" th:href="@{/articles(
             page=${articles.number},
-            sort='hashtag' + (*{sort.getOrderFor('hashtags')} != null ? (*{sort.getOrderFor('hashtags').direction.name} != 'DESC' ? ',desc' : '') : ''),
+            sort='hashtag' + (*{sort.getOrderFor('hashtag')} != null ? (*{sort.getOrderFor('hashtag').direction.name} != 'DESC' ? ',desc' : '') : ''),
             searchType=${param.searchType},
             searchValue=${param.searchValue}
         )}"/>
@@ -50,7 +50,7 @@
                     <attr sel="td.title/a" th:text="${article.title}" th:href="@{'/articles/' + ${article.id}}" />
                     <attr sel="td.hashtag/span" th:each="hashtag : ${article.hashtag}">
                         <attr sel="a"
-                              th:text="'#' + ${hashtag}"
+                              th:text="${hashtag}"
                               th:href="@{/articles(searchType=${searchTypeHashtag},searchValue=${hashtag})}"
                         />
                     </attr>
