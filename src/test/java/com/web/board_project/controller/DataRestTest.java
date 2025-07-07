@@ -19,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class DataRestTest {
-
-
+    
     private final MockMvc mvc;
 
     public DataRestTest(@Autowired MockMvc mvc) {
