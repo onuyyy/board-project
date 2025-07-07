@@ -1,4 +1,4 @@
-package com.web.board_project.domain.type;
+package com.web.board_project.domain.constant;
 
 import lombok.Getter;
 
