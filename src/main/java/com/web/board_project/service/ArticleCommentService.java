@@ -1,9 +1,13 @@
 package com.web.board_project.service;
 
+import com.web.board_project.domain.Article;
 import com.web.board_project.domain.ArticleComment;
+import com.web.board_project.domain.UserAccount;
 import com.web.board_project.dto.ArticleCommentDto;
+import com.web.board_project.dto.UserAccountDto;
 import com.web.board_project.repository.ArticleCommentRepository;
 import com.web.board_project.repository.ArticleRepository;
+import com.web.board_project.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +21,10 @@ import java.util.List;
 @Transactional
 @Service
 public class ArticleCommentService {
+
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
-
+    private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)
     public List<ArticleCommentDto> searchArticleComments(Long articleId) {
@@ -31,9 +36,12 @@ public class ArticleCommentService {
 
     public void saveArticleComment(ArticleCommentDto dto) {
         try {
-            articleCommentRepository.save(dto.toEntity(articleRepository.getReferenceById(dto.articleId())));
+            Article article = articleRepository.getReferenceById(dto.articleId());
+            // 댓글의 작성자
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+            articleCommentRepository.save(dto.toEntity(article, userAccount));
         } catch (EntityNotFoundException e) {
-            log.warn("댓글 저장 실패. 댓글의 게시글을 찾을 수 없습니다 - dto: {}", dto);
+            log.warn("댓글 저장 실패. 댓글 작성에 ㅍㄹ요한 정보를 찾을 수 없습니다. - : {}", e.getLocalizedMessage());
         }
     }
 

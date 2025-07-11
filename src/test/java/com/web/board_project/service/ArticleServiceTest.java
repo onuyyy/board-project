@@ -32,13 +32,14 @@ import static org.mockito.BDDMockito.*;
 class ArticleServiceTest {
 
     /*
-        스프링부트 슬라이스 테스트 사용하지 않고 작성할 예정
+        스프링부트 슬라이스 테스트 사용하지 않고 작성할 예정 - 순수 자바 단위로 테스트 할 때
         스트링이 뜨는 데 걸리는 시간을 가볍게 하기 위하여 스프링부트를 안 뜨게 하겠음
      */
 
     @InjectMocks // Mock 주입 대상을 표시
     private ArticleService sut;
 
+    // 스프링 없는 테스트일 때 Mock, 아니면 MockitoBean
     @Mock private ArticleRepository articleRepository;
     @Mock private UserAccountRepository userAccountRepository;
 
