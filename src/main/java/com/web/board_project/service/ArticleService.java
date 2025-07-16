@@ -78,24 +78,28 @@ public class ArticleService {
 
         try {
             Article article = articleRepository.getReferenceById(articleId);
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
 
-            // title, content는 not null 필드라 방어 로직 추가
-            if (dto.title() != null) { article.setTitle(dto.title()); }
-            if (dto.content() != null) { article.setContent(dto.content()); }
+            // 게시글 사용자와 인증된 사용자가 같은지 확인
+            if (article.getUserAccount().equals(userAccount)) {
+                // title, content는 not null 필드라 방어 로직 추가
+                if (dto.title() != null) { article.setTitle(dto.title()); }
+                if (dto.content() != null) { article.setContent(dto.content()); }
 
-            // hashtag는 null 필드라서 dto에 있는 걸 그대로 넣으면 된다
-            article.setHashtag(dto.hashtag());
+                // hashtag는 null 필드라서 dto에 있는 걸 그대로 넣으면 된다
+                article.setHashtag(dto.hashtag());
+            }
 
         } catch (EntityNotFoundException e) {
-            log.warn("게시글 업데이트 실패, 게시글을 찾을 수 없습니다 - dto: {}", dto);
+            log.warn("게시글 업데이트 실패, 게시글을 수정하는데 필요한 정보를 찾을 수 없습니다 - {}", e.getLocalizedMessage());
         }
 
         // save는 필요 없다... 왜?
         // 트랜잭션이 걸려 있어서 영속성컨텍스트가 변경을 감지하고 이 함수가 끝나면 쿼리를 날린다
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     public long getArticleCount() {

@@ -33,6 +33,8 @@ public interface ArticleRepository extends
     // hashtag는 정확한 분류이므로 containing 사용 안 함
     Page<Article> findByHashtag(String title, Pageable pageable);
 
+    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
+
     /*
         querydsl
         QuerydslPredicateExecutor : Entity 안에 있는 모든 필드에 대한 기본 검색 기능을 추가해줌
