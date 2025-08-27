@@ -207,7 +207,7 @@ class ArticleControllerTest {
                 .andExpect(view().name("articles/search-hashtag"))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(model().attribute("articles", Page.empty()))
-                .andExpect(model().attribute("hashtags", hashtags))
+                .andExpect(model().attribute("hashtagDtos", hashtags))
                 .andExpect(model().attributeExists("paginationBarNumbers"))
                 .andExpect(model().attribute("searchType", SearchType.HASHTAG));
 
@@ -234,7 +234,7 @@ class ArticleControllerTest {
                 .andExpect(view().name("articles/search-hashtag"))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(model().attribute("articles", Page.empty()))
-                .andExpect(model().attributeExists("hashtags"))
+                .andExpect(model().attributeExists("hashtagDtos"))
                 .andExpect(model().attributeExists("paginationBarNumbers"))
                 .andExpect(model().attribute("searchType", SearchType.HASHTAG));
 

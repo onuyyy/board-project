@@ -31,7 +31,10 @@ public record ArticleResponse(
                 dto.id(),
                 dto.title(),
                 dto.content(),
-                dto.hashtag(),
+                dto.hashtagDtos().stream()
+                        .map(hashtagDto -> "#" + hashtagDto.hashtagName())
+                        .reduce((h1, h2) -> h1 + " " + h2)
+                        .orElse(""),
                 dto.createdAt(),
                 dto.userAccountDto().email(),
                 nickname
