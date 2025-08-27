@@ -26,8 +26,8 @@ public class ArticleRepositoryCustomImpl extends QuerydslRepositorySupport imple
         // from부터 시작한다
         return from(article)
                 .distinct() // 중복 제거
-                .select(article.hashtag)
-                .where(article.hashtag.isNotNull())
+                .select(article.hashtags.any().hashtagName)
+                .where(article.hashtags.isNotEmpty())
                 .fetch();
     }
 }

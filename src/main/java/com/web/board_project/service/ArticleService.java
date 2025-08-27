@@ -1,11 +1,13 @@
 package com.web.board_project.service;
 
 import com.web.board_project.domain.Article;
+import com.web.board_project.domain.Hashtag;
 import com.web.board_project.domain.UserAccount;
 import com.web.board_project.domain.constant.SearchType;
 import com.web.board_project.dto.ArticleDto;
 import com.web.board_project.dto.ArticleWithCommentsDto;
 import com.web.board_project.repository.ArticleRepository;
+import com.web.board_project.repository.HashtagRepository;
 import com.web.board_project.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final UserAccountRepository userAccountRepository;
+    private final HashtagRepository hashtagRepository;
 
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, Pageable pageable) {
@@ -41,7 +46,7 @@ public class ArticleService {
             case NICKNAME -> articleRepository.findByUserAccount_NicknameContaining(searchKeyword, pageable).map(ArticleDto::from);
 
             // 해시태그에서 #은 자동으로 넣어주자 todo # 어떻게 할지 리팩토링
-            case HASHTAG-> articleRepository.findByHashtag(searchKeyword, pageable).map(ArticleDto::from);
+            case HASHTAG-> articleRepository.findByHashtags_HashtagNameContaining(searchKeyword, pageable).map(ArticleDto::from);
         };
     }
 
@@ -78,24 +83,35 @@ public class ArticleService {
 
         try {
             Article article = articleRepository.getReferenceById(articleId);
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
 
-            // title, content는 not null 필드라 방어 로직 추가
-            if (dto.title() != null) { article.setTitle(dto.title()); }
-            if (dto.content() != null) { article.setContent(dto.content()); }
+            // 게시글 사용자와 인증된 사용자가 같은지 확인
+            if (article.getUserAccount().equals(userAccount)) {
+                // title, content는 not null 필드라 방어 로직 추가
+                if (dto.title() != null) { article.setTitle(dto.title()); }
+                if (dto.content() != null) { article.setContent(dto.content()); }
 
-            // hashtag는 null 필드라서 dto에 있는 걸 그대로 넣으면 된다
-            article.setHashtag(dto.hashtag());
+                // 해시태그 업데이트
+                article.clearHashtags();
+                if (dto.hashtagDtos() != null && !dto.hashtagDtos().isEmpty()) {
+                    Set<Hashtag> hashtags = dto.hashtagDtos().stream()
+                            .map(hashtagDto -> hashtagRepository.findByHashtagName(hashtagDto.hashtagName())
+                                    .orElse(Hashtag.of(hashtagDto.hashtagName())))
+                            .collect(Collectors.toSet());
+                    article.addHashtags(hashtags);
+                }
+            }
 
         } catch (EntityNotFoundException e) {
-            log.warn("게시글 업데이트 실패, 게시글을 찾을 수 없습니다 - dto: {}", dto);
+            log.warn("게시글 업데이트 실패, 게시글을 수정하는데 필요한 정보를 찾을 수 없습니다 - {}", e.getLocalizedMessage());
         }
 
         // save는 필요 없다... 왜?
         // 트랜잭션이 걸려 있어서 영속성컨텍스트가 변경을 감지하고 이 함수가 끝나면 쿼리를 날린다
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     public long getArticleCount() {
@@ -109,7 +125,7 @@ public class ArticleService {
             return Page.empty(pageable);
         }
 
-        return articleRepository.findByHashtag(hashtag, pageable).map(ArticleDto::from);
+        return articleRepository.findByHashtags_HashtagNameContaining(hashtag, pageable).map(ArticleDto::from);
     }
 
     public List<String> getHashtags() {

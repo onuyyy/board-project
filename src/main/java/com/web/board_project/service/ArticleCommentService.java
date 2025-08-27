@@ -4,7 +4,6 @@ import com.web.board_project.domain.Article;
 import com.web.board_project.domain.ArticleComment;
 import com.web.board_project.domain.UserAccount;
 import com.web.board_project.dto.ArticleCommentDto;
-import com.web.board_project.dto.UserAccountDto;
 import com.web.board_project.repository.ArticleCommentRepository;
 import com.web.board_project.repository.ArticleRepository;
 import com.web.board_project.repository.UserAccountRepository;
@@ -41,7 +40,7 @@ public class ArticleCommentService {
             UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
             articleCommentRepository.save(dto.toEntity(article, userAccount));
         } catch (EntityNotFoundException e) {
-            log.warn("댓글 저장 실패. 댓글 작성에 ㅍㄹ요한 정보를 찾을 수 없습니다. - : {}", e.getLocalizedMessage());
+            log.warn("댓글 저장 실패. 댓글 작성에 필요한 정보를 찾을 수 없습니다. - : {}", e.getLocalizedMessage());
         }
     }
 
@@ -54,8 +53,8 @@ public class ArticleCommentService {
         }
     }
 
-    public void deleteArticleComment(Long articleCommentId) {
-        articleCommentRepository.deleteById(articleCommentId);
+    public void deleteArticleComment(Long articleCommentId, String userId) {
+        articleCommentRepository.deleteByIdAndUserAccount_UserId(articleCommentId, userId);
     }
 
 }

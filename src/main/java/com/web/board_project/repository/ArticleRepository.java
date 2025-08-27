@@ -30,8 +30,10 @@ public interface ArticleRepository extends
     Page<Article> findByUserAccount_UserIdContaining(String userId, Pageable pageable);
     Page<Article> findByUserAccount_NicknameContaining(String nickname, Pageable pageable);
 
-    // hashtag는 정확한 분류이므로 containing 사용 안 함
-    Page<Article> findByHashtag(String title, Pageable pageable);
+    // hashtag 검색을 위한 메서드 - 해시태그 관계를 통해 검색
+    Page<Article> findByHashtags_HashtagNameContaining(String hashtagName, Pageable pageable);
+
+    void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
 
     /*
         querydsl
@@ -40,7 +42,7 @@ public interface ArticleRepository extends
     @Override
     default void customize(QuerydslBindings bindings, QArticle root) {
         bindings.excludeUnlistedProperties(true); // 리스팅 하지 않은 프로퍼티를 검색에서 제외함 > 기본 값음 false로 되어 있음
-        bindings.including(root.title, root.content, root.hashtag, root.createdAt, root.createdBy); // 원하는 필드 추가
+        bindings.including(root.title, root.content, root.createdAt, root.createdBy); // 원하는 필드 추가
         bindings.bind(root.title).first(StringExpression::containsIgnoreCase); // 검색 파라미터는 하나만 받는다 like '%%'
         bindings.bind(root.createdAt).first(DateTimeExpression::eq);
         bindings.bind(root.createdBy).first(StringExpression::containsIgnoreCase);

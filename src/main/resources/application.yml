@@ -37,6 +37,12 @@ spring:
     detection-strategy: annotated
   thymeleaf3:
     decoupled-logic: true
+
+# 세션 유지 시간
+#server:
+#  servlet:
+#    session:
+#      timeout: 30m
 ---
 # @DataJpaTest 어노테이션을 사용하면, 자동으로 Jpa가 미리 준비한 Db로 테스트를 하게 된다.
 # 그것보단 테스트 DB를 따로 지정하고 싶을 때 아래와 같이 설정한 후
