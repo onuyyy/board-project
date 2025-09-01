@@ -71,7 +71,7 @@ class JpaRepositoryTest {
         // When
         Article savedArticle = articleRepository.saveAndFlush(article);
         // Then
-        assertThat(savedArticle).hasFieldOrPropertyWithValue("hashtag", updatedHashtag);
+        assertThat(savedArticle).hasFieldOrPropertyWithValue("hashtag", savedArticle);
     }
     @DisplayName("delete 테스트")
     @Test

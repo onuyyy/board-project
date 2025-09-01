@@ -23,7 +23,7 @@ public class Hashtag extends AuditingFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ToString.Exclude
+    @ToString.Exclude // toString 순환 참조 문제
     @ManyToMany(mappedBy = "hashtags")
     private Set<Article> articles = new LinkedHashSet<>();
 
@@ -40,7 +40,6 @@ public class Hashtag extends AuditingFields {
         return new Hashtag(hashtagName);
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -52,4 +51,5 @@ public class Hashtag extends AuditingFields {
     public int hashCode() {
         return Objects.hash(this.getId());
     }
+
 }
