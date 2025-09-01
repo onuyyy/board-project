@@ -38,6 +38,29 @@ spring:
   thymeleaf3:
     decoupled-logic: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          # Oauth2의 인증을 제공하는 공급자를 Spring에게 알려줘야 한다 (카카오)
+          kakao:
+            client-id: ${KAKAO_OAUTH_CLIENT_ID}
+            client-secret: ${KAKAO_OAUTH_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            # 특수 문자가 들어간 경우는 쌍다옴표로 묶어줘야 함
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
+            client-authentication-method: client_secret_post
+        provider:
+            kakao:
+              authorization-uri: https://kauth.kakao.com/oauth/authorize
+              token-uri: https://kauth.kakao.com/oauth/token
+              # oauth 서버로부터 유저 정보 불러오기
+              user-info-uri: https://kapi.kakao.com/v2/user/me
+              # 서비스의 식별자를 명시해주기 : 카카오는 id
+              user-name-attribute: id
+
+
+
 # 세션 유지 시간
 #server:
 #  servlet:
