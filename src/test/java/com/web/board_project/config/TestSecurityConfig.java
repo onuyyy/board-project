@@ -1,30 +1,44 @@
 package com.web.board_project.config;
 
-import com.web.board_project.domain.UserAccount;
-import com.web.board_project.repository.UserAccountRepository;
+import com.web.board_project.service.UserAccountService;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.anyString;
 
-@Import({SecurityConfig.class}) // 정의되어 있는 설정들 바로 쓰기 위하여
+@Configuration
 public class TestSecurityConfig {
 
     @MockBean
-    private UserAccountRepository userAccountRepository;
+    private UserAccountService userAccountService;
 
-    @BeforeTestMethod // spring이 지원해주는 spring test를 한다면, 특정 주기에 맞춰서 이 메서드 호출하겠음
-    public void securitySetup() {
-        given(userAccountRepository.findById(anyString())).willReturn(Optional.of(UserAccount.of(
+    public TestSecurityConfig() {
+        given(userAccountService.searchUser(anyString()))
+                .willReturn(Optional.of(createTestUserAccountDto()));
+    }
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .csrf(csrf -> csrf.disable())
+                .formLogin();
+        return http.build();
+    }
+
+    private static com.web.board_project.dto.UserAccountDto createTestUserAccountDto() {
+        return com.web.board_project.dto.UserAccountDto.of(
                 "testId",
                 "pw",
                 "onuy@email.com",
                 "test",
                 "test memo"
-        )));
+        );
     }
 }
