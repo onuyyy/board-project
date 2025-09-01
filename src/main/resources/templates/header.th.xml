@@ -5,6 +5,6 @@
     <!-- 타임리프 시큐리티 문법 sec:authorize -->
     <attr sel="#username" sec:authorize="isAuthenticated()" sec:authentication="principal.nickname" />
     <attr sel="#login" sec:authorize="!isAuthenticated()" th:href="@{/login}" />
-<!--    <attr sel="#kakao-login" sec:authorize="!isAuthenticated()" th:href="@{/oauth2/authorization/kakao}" />-->
+    <attr sel="#kakao-login" sec:authorize="!isAuthenticated()" th:href="@{/oauth2/authorization/kakao}" />
     <attr sel="#logout" sec:authorize="isAuthenticated()" th:href="@{/logout}" />
 </thlogic>

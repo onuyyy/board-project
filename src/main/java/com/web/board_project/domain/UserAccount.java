@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Getter
+// UserAccount가 가지고 있는 것만 보는 것을 SuperClass에 있는 것도 ToString 할 수 있게끔
 @ToString(callSuper = true)
 @Table(indexes = {
         @Index(columnList = "userId", unique = true),
@@ -41,6 +42,7 @@ public class UserAccount extends AuditingFields {
         this.modifiedBy = createdBy;
     }
 
+    // 팩토리 메소드를 이용한 생성
     public static UserAccount of(String userId, String userPassword, String email, String nickname, String memo) {
         return UserAccount.of(userId, userPassword, email, nickname, memo, null);
     }

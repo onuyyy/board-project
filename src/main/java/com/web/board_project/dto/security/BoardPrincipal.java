@@ -3,10 +3,13 @@ package com.web.board_project.dto.security;
 import com.web.board_project.dto.UserAccountDto;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,10 +19,15 @@ public record BoardPrincipal(
         Collection<? extends GrantedAuthority> authorities,
         String email,
         String nickname,
-        String memo
-) implements UserDetails {
+        String memo,
+        Map<String, Object> oAuth2Attribute
+) implements UserDetails, OAuth2User {
 
     public static BoardPrincipal of(String username, String password,String email, String nickname, String memo) {
+        return of(username, password, email, nickname, memo, Map.of());
+    }
+
+    public static BoardPrincipal of(String username, String password,String email, String nickname, String memo, Map<String, Object> oAuth2Attribute) {
 
         Set<RoleType> roleTypes = Set.of(RoleType.USER);
 
@@ -32,7 +40,8 @@ public record BoardPrincipal(
                         .collect(Collectors.toUnmodifiableSet()),
                 email,
                 nickname,
-                memo
+                memo,
+                oAuth2Attribute
         );
     }
 
@@ -55,6 +64,19 @@ public record BoardPrincipal(
                 nickname,
                 memo
         );
+    }
+
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        // OAuth 각종 인증 정보를 받는 구조가 다 다를 것이기 때문에 object로 받기 위하여 map
+        return oAuth2Attribute;
+    }
+
+    @Override
+    public String getName() {
+        // 유저 식별 정보를 내려준다
+        return username;
     }
 
     @Override
